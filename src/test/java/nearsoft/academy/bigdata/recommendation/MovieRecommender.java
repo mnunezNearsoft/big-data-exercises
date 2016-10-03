@@ -21,6 +21,7 @@ public class MovieRecommender{
     private HashMap usersMap = new HashMap();
     private HashMap productsMap = new HashMap();
     private int reviews = 0;
+    /* NOTE: Change the path below */
     private final String FILEPATH_TO_WRITE = "/home/marco/Documents/Nearsoft/Weeks/03/real/big-data-exercises/MRFormat.csv";
 
     public MovieRecommender(String filepath){
@@ -46,6 +47,36 @@ public class MovieRecommender{
 
         return this.getUsersMap().size();
 
+    }
+
+    public List getRecommendationsForUser(String userId){
+
+
+        List al = new ArrayList();
+        List recommendations = null;
+
+        try{
+            DataModel model = new FileDataModel(new File(FILEPATH_TO_WRITE));
+            UserSimilarity similarity = new PearsonCorrelationSimilarity(model);
+            UserNeighborhood neighborhood = new ThresholdUserNeighborhood(0.1, similarity, model);
+            UserBasedRecommender recommender = new GenericUserBasedRecommender(model, neighborhood, similarity);
+
+            int userID = this.getUserIdFromUsersMap(userId);
+
+            if(userID == -1){
+                System.out.println("AN ERROR OCURRED");
+                return null;
+            }
+
+            recommendations = recommender.recommend(userID, 3);
+
+
+        }
+        catch(Exception e){
+            e.printStackTrace();
+        }
+
+        return recommendations;
     }
 
 
@@ -182,7 +213,6 @@ public class MovieRecommender{
 
             this.incrementReviews();
 
-            // System.out.println("PRODUCT ID");
             reviewInfo = currentLine.split("product/productId:")[1].trim();
             HashMap mp = this.getProductsMap();
 
@@ -225,12 +255,26 @@ public class MovieRecommender{
 
     }
 
-    // public static void main(String[] args) {
-    //
-    //     // MovieRecommender mv = new MovieRecommender("./smallMovies.txt.tar.gz");
-    //     MovieRecommender mv = new MovieRecommender("./movies.txt.gz");
-    //     // System.out.println("File path: " + mv.getFilepath());
-    //
-    // }
+    private int getUserIdFromUsersMap(String userId){
+
+        Set set = this.getUsersMap().entrySet();
+        Iterator i = set.iterator();
+
+        while(i.hasNext()){
+
+            Map.Entry entry = (Map.Entry)i.next();
+
+            if( ((String)entry.getKey()).equals(userId) ){
+
+                System.out.println("FOUNDED: " + entry.getValue());
+
+                return Integer.parseInt((String)entry.getValue());
+            }
+
+        }
+
+        return -1;
+
+    }
 
 }

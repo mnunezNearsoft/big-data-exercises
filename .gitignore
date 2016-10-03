@@ -1,3 +1,5 @@
 src/test/java/nearsoft/academy/bigdata/recommendation/movies.txt.gz
 MRFormat.csv
 movies.txt.gz
+MRFormatMini.csv
+smallMovies.txt.tar.gz

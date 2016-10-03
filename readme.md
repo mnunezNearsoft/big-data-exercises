@@ -14,6 +14,8 @@ This repo contains several common big data exercises.
 
 ## Important
 
+0. Cannot pass the last test getRecommendationsForUser, the other three are passing ~ 2 min.
+
 1. In MovieRecommenderTest.java change the path, where you downloaded the movie reviews sample data, otherwise the tests will fail.
 
 
